@@ -93,6 +93,7 @@ module.exports = {
     //API for login
     login: function(req, res) {
         // bcrypt.compare(req.body.password,)
+        //checking if the username is already registered 
         User.findOne({
             username: req.body.username
         }).exec(function(err, db_user) {
@@ -100,12 +101,14 @@ module.exports = {
                 res.json({
                     "messgae": 'query error'
                 });
+                //if the user with that username does not exist
             } else if (db_user == null) {
                 res.json({
                     "status": "",
                     "message": "username does not exist"
                 })
             } else {
+                //checking if the password given during login matches with that of the database
                 bcrypt.compare(req.body.password, db_user.password).then(doMatch => {
                     if (doMatch) {
                         var payLoad = {
@@ -113,6 +116,7 @@ module.exports = {
                             user_id: db_user._id,
                             role: db_user.role
                         }
+                        //token is being created 
                         var token = jwt.sign(payLoad, secretKey);
                         res.json(db_user.role);
                         res.json({
@@ -214,6 +218,7 @@ module.exports = {
     getAllTransaction: async function(req, res) {
         const stripe = require('stripe')('sk_test_51KrvpxEzgKwEXW8k2jArJKoroGe43qh0FG1Q8KPZasOAznuF8NKoyrM2G1HusYOTYLmxqfsF8QAOtfi4xd3xXjnD00LNVFoFsY');
         try {
+            //getting all the stripe transactions
             const transactions = await stripe.charges.list({
                 limit: 50,
             });
