@@ -7,6 +7,7 @@ var secretKey = "rtyui"
 const bcrypt = require('bcrypt');
 const YOUR_DOMAIN = "http://localhost:3000";
 module.exports = {
+    //Singup API 
     signup: function(req, res) {
         // user find if the username already exists or not
         var regexusername = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/
@@ -15,17 +16,20 @@ module.exports = {
         var username = req.body.username;
         var password = req.body.password;
         console.log(password);
+        //using reqex to validate the username 
         if (!req.body.username.trim().match(regexusername)) {
             res.status(400);
             return res.json({
                 "message": "Email Input does not match"
             });
+            //using regex to validate the password
         } else if (!req.body.password.trim().match(regexpassword)) {
             res.status(400);
             res.json({
                 "message": "Please enter minimum eight characters, at least one lowercase and uppercase letter"
             });
         } else {
+            //checking if the user with that username exists 
             User.find({
                 username: req.body.username
             }).exec(function(err, user) {
